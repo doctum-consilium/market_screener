@@ -5,6 +5,7 @@ Finnhub API (gratuit tier: 60 req/min, no auth required for free public data).
 Fallback quand yfinance est rate-limited.
 """
 import logging
+import os
 from typing import Optional
 
 import requests
@@ -12,7 +13,9 @@ import requests
 logger = logging.getLogger(__name__)
 
 FINNHUB_API_BASE = "https://finnhub.io/api/v1"
-FINNHUB_API_KEY = "cokxzzzqad6rg12n48p0"  # Free tier key (public)
+# La clé vient de l'environnement, jamais du code : le dépôt est public.
+# Sans clé, le repli Finnhub est simplement désactivé.
+FINNHUB_API_KEY = os.environ.get("FINNHUB_API_KEY", "").strip()
 
 
 def _safe_float(value) -> Optional[float]:
@@ -35,6 +38,9 @@ def fetch_finnhub_fundamentals(ticker: str) -> dict[str, Optional[float]]:
     
     Returns dict with fundamental fields, or empty dict on error.
     """
+    if not FINNHUB_API_KEY:
+        logger.debug("Finnhub fallback skipped for %s: FINNHUB_API_KEY not set", ticker)
+        return {}
     try:
         # Finnhub Company Profile endpoint (includes basic fundamentals)
         resp = requests.get(
