@@ -1,7 +1,7 @@
 # Socle Alpine (musl) plutôt que Debian slim : slim porte 209 vulnérabilités système (2
 # critiques, 74 hautes) sans correctif publié (osv-scanner, 2026-11-13). Toutes les
 # dépendances Python ont des roues musllinux.
-FROM python:3.12-alpine
+FROM python:3.15-alpine
 # Alpine publie ses correctifs plus vite que l'image python n'est reconstruite : on les
 # applique (krb5 et zlib, 16 vulnérabilités dont 1 critique, le 2026-11-13).
 RUN apk upgrade --no-cache
